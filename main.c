@@ -1,55 +1,109 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cgama <marvin@42.fr>                       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/30 13:26:14 by cgama             #+#    #+#             */
+/*   Updated: 2024/09/30 13:26:16 by cgama            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+
 #include "minishell.h"
 
-t_minishell	g_minishell;
+t_minishell g_minishell;
 
-static void	ft_init_minishell(char **env)
+static void init_global_var(char **env)
 {
-	ft_memset(&g_minishell, 0, sizeof(t_minishell));
-	g_minishell.environ = env;
-	ft_init_envlst();
-	g_minishell.stdin = dup(0);
-	g_minishell.stdout = dup(1);
-	tcgetattr(STDIN_FILENO, &g_minishell.original_term);
+    ft_memset(&g_minishell, 0, sizeof(t_minishell));
+    g_minishell.environ = env;
+    //->
+    g_minishell.stdin = dup(0);
+    g_minishell.stdout = dup(1);
+    tcgetattr(STDIN_FILENO, &g_minishell.original_term);
 }
 
-static void	ft_start_execution(void)
+const char* token_type_to_string(t_token_type type)
 {
-	signal(SIGQUIT, ft_sigquit_handler);
-	ft_init_tree(g_minishell.ast);
-	if (g_minishell.heredoc_sigint)
-	{
-		ft_clear_ast(&g_minishell.ast);
-		g_minishell.heredoc_sigint = false;
-	}
-	tcsetattr(STDIN_FILENO, TCSANOW, &g_minishell.original_term);
-	g_minishell.exit_s = ft_exec_node(g_minishell.ast, false);
-	ft_clear_ast(&g_minishell.ast);
+    switch (type)
+    {
+        case T_IDENTIFIER: return "T_IDENTIFIER";
+        case T_LESS: return "T_LESS";
+        case T_GREAT: return "T_GREAT";
+        case T_DLESS: return "T_DLESS";
+        case T_DGREAT: return "T_DGREAT";
+        case T_PIPE: return "T_PIPE";
+        case T_O_PARENT: return "T_O_PARENT";
+        case T_C_PARENT: return "T_C_PARENT";
+        case T_AND: return "T_AND";
+        case T_OR: return "T_OR";
+        case T_NL: return "T_NL";
+        default: return "UNKNOWN_TOKEN_TYPE";
+    }
+}
+void print_node (t_node *node)
+{
+    ft_printf("args: %s\n", node->args);
+    ft_printf("expanded_args: %s\n", node->expanded_args);
+    ft_printf("type: %s\n", node->type);
+
+    while (node->io_list)
+    {
+        ft_printf("io expanded_value: %s\n", node->io_list->expanded_value);
+        ft_printf("io value: %s\n", node->io_list->value);
+        ft_printf("io type: %s\n", node->io_list->type);
+    }
+    
 }
 
-int	main(int argc, char **argv, char **env)
+void    ft_recursive_print_ast(t_node *node)
 {
-	((void)argc, (void)argv);
-	ft_init_minishell(env);
-	while (1)
-	{
-		ft_init_signals();
-		g_minishell.line = readline(PROMPT);
-		if (!g_minishell.line)
-			(ft_clean_ms(),
-				ft_putstr_fd("exit\n", 1), exit(g_minishell.exit_s));
-		if (g_minishell.line[0])
-			add_history(g_minishell.line);
-		g_minishell.tokens = ft_tokenize();
-		if (!g_minishell.tokens)
-			continue ;
-		g_minishell.ast = ft_parse();
-		if (g_minishell.parse_err.type)
-		{
-			ft_handle_parse_err();
-			continue ;
-		}
-		ft_start_execution();
-	}
-	ft_garbage_collector(NULL, true);
-	return (ft_clean_ms(), g_minishell.exit_s);
+    if (!node)
+        return ;
+    if (node->type == N_CMD)
+        print_node(node);
+    else
+    {
+        if (node->left)
+            ft_recursive_print_ast(node->left);
+        if (node->right)
+            ft_recursive_print_ast(node->right);
+    }
+    //free(node);
+}
+
+int main(int argc, char **argv, char **env)
+{
+    (void)argc;
+    (void)argv;
+    init_global_var(env);
+    while (1)
+    {
+        g_minishell.line = readline("minishell>");
+        if (!g_minishell.line)
+        {
+            ft_putstr_fd("exit\n", 1);
+            exit(g_minishell.exit_s);
+        }
+        if (g_minishell.line[0])
+            add_history(g_minishell.line);
+        g_minishell.tokens = ft_tokenize();
+        if (!g_minishell.tokens)
+        {
+            ft_putstr_fd("error with tokens! exit\n", 1);
+            exit(g_minishell.exit_s);
+        }
+        //t_token *tmp_token = g_minishell.tokens;
+        while (g_minishell.tokens)
+        {
+            ft_printf("Token type: %s\n", token_type_to_string(g_minishell.tokens->type));
+            ft_printf("Token value: %s\n", (g_minishell.tokens->value));
+            g_minishell.tokens = g_minishell.tokens->next;
+        }
+        ft_printf("\n\n\n\n");
+        g_minishell.ast = parsing();
+        ft_recursive_print_ast(g_minishell.ast);
+    }    
 }
