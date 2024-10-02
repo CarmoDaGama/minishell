@@ -46,14 +46,19 @@ const char* token_type_to_string(t_token_type type)
 void print_node (t_node *node)
 {
     ft_printf("args: %s\n", node->args);
-    ft_printf("expanded_args: %s\n", node->expanded_args);
-    ft_printf("type: %s\n", node->type);
-
-    while (node->io_list)
+    while (node->expanded_args != NULL && *node->expanded_args != NULL && **node->expanded_args != '\0')
+    {
+        ft_printf("expanded_args: %s\n", *node->expanded_args);
+        (node->expanded_args)++;
+    }
+    ft_printf("type: %d\n", node->type);
+    t_io_node *tmp = node->io_list;
+    while (tmp)
     {
         ft_printf("io expanded_value: %s\n", node->io_list->expanded_value);
         ft_printf("io value: %s\n", node->io_list->value);
-        ft_printf("io type: %s\n", node->io_list->type);
+        ft_printf("io type: %d\n", node->io_list->type);
+        tmp = tmp->next;
     }
     
 }
@@ -81,7 +86,7 @@ int main(int argc, char **argv, char **env)
     init_global_var(env);
     while (1)
     {
-        g_minishell.line = readline("minishell>");
+        g_minishell.line = readline("minishell$ ");
         if (!g_minishell.line)
         {
             ft_putstr_fd("exit\n", 1);
@@ -94,16 +99,14 @@ int main(int argc, char **argv, char **env)
         {
             ft_putstr_fd("error with tokens! exit\n", 1);
             exit(g_minishell.exit_s);
-        }
-        //t_token *tmp_token = g_minishell.tokens;
-        while (g_minishell.tokens)
-        {
-            ft_printf("Token type: %s\n", token_type_to_string(g_minishell.tokens->type));
-            ft_printf("Token value: %s\n", (g_minishell.tokens->value));
-            g_minishell.tokens = g_minishell.tokens->next;
-        }
-        ft_printf("\n\n\n\n");
+        }       
         g_minishell.ast = parsing();
+        if (g_minishell.parse_err.type)
+		{
+			ft_handle_parse_err();
+			continue ;
+		}
+        //echo "gama" > x.txt && cat x.txt
         ft_recursive_print_ast(g_minishell.ast);
     }    
 }

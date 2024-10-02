@@ -187,4 +187,5 @@ void    ft_set_parse_err(t_parse_err_type type);
 void    ft_handle_parse_err(void);
 bool    ft_is_redir(t_token_type type);
 char    *ft_strjoin_with(char const *s1, char const *s2, char c);
+const char* token_type_to_string(t_token_type type);
 #endif

@@ -93,7 +93,7 @@ t_node  *ft_get_simple_cmd(void)
     t_node  *node;
 
     if (g_minishell.parse_err.type)
-        return (NULL);
+        return (NULL); 
     node = ft_new_node(N_CMD);
     if (!node)
         return (ft_set_parse_err(E_MEM), NULL);
@@ -103,17 +103,15 @@ t_node  *ft_get_simple_cmd(void)
     {
         if (g_minishell.curr_token->type == T_IDENTIFIER)
         {
-            if (g_minishell.curr_token->type == T_IDENTIFIER)
-            {
-                if (!ft_join_args(&(node->args)))
-                    return (ft_clear_cmd_node(node), ft_set_parse_err(E_MEM), NULL);
-            }
-            else if (ft_is_redir(g_minishell.curr_token->type))
-            {
-                if (!ft_get_io_list(&(node->io_list)))
-                    return (free(node->args), free(node), NULL);
-            }
+            if (!ft_join_args(&(node->args)))
+                return (ft_clear_cmd_node(node), ft_set_parse_err(E_MEM), NULL);
         }
+        else if (ft_is_redir(g_minishell.curr_token->type))
+        {
+            if (!ft_get_io_list(&(node->io_list)))
+                return (free(node->args), free(node), NULL);
+        }
+        
     }
     return (node);
 }
