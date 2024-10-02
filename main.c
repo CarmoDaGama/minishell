@@ -62,6 +62,58 @@ void print_node (t_node *node)
     }
     
 }
+void print_io_node(t_io_node *io_node) {
+    while (io_node) {
+        switch (io_node->type) {
+            case IO_IN: printf("I/O Type: IO_IN\n"); break;
+            case IO_OUT: printf("I/O Type: IO_OUT\n"); break;
+            case IO_HEREDOC: printf("I/O Type: IO_HEREDOC\n"); break;
+            case IO_APPEND: printf("I/O Type: IO_APPEND\n"); break;
+        }
+        printf("Value: %s\n", io_node->value);
+        if (io_node->expanded_value) {
+            printf("Expanded Value: ");
+            for (char **exp = io_node->expanded_value; *exp; ++exp) {
+                printf("%s ", *exp);
+            }
+            printf("\n");
+        }
+        if (io_node->here_doc) {
+            printf("Here Doc: %d\n", io_node->here_doc);
+        }
+        io_node = io_node->next;
+    }
+}
+
+void print_t_node(t_node *node) {
+    if (!node) return;
+
+    switch (node->type) {
+        case N_PIPE: printf("Node Type: N_PIPE\n"); break;
+        case N_AND: printf("Node Type: N_AND\n"); break;
+        case N_OR: printf("Node Type: N_OR\n"); break;
+        case N_CMD: printf("Node Type: N_CMD\n"); break;
+    }
+
+    printf("Arguments: %s\n", node->args ? node->args : "NULL");
+
+    if (node->expanded_args) {
+        printf("Expanded Args: ");
+        for (char **arg = node->expanded_args; *arg; ++arg) {
+            printf("%s ", *arg);
+        }
+        printf("\n");
+    }
+
+    printf("I/O List:\n");
+    print_io_node(node->io_list);
+
+    printf("Left Child:\n");
+    print_t_node(node->left);
+    
+    printf("Right Child:\n");
+    print_t_node(node->right);
+}
 
 void    ft_recursive_print_ast(t_node *node)
 {
