@@ -12,23 +12,23 @@
 
 #include "minishell.h"
 
-t_node  *ft_term(void)
+t_branch  *get_term(void)
 {
-    t_node  *node;
+    t_branch  *node;
 
-    if (g_minishell.parse_err.type)
+    if (global_var.parse_err)
         return (NULL);
-    if (ft_curr_token_is_binop() || g_minishell.curr_token->type == T_C_PARENT)
-        return (ft_set_parse_err(E_SYNTAX), NULL);
-    else if (g_minishell.curr_token->type == T_O_PARENT)
+    if (ft_curr_token_is_binop() || global_var.curr_token->type == T_C_PARENT)
+        return (ft_set_parse_err(1), NULL);
+    else if (global_var.curr_token->type == T_O_PARENT)
     {
         ft_get_next_token();
-        node = ft_expression(0);
+        node = get_sequence(0);
         if (!node)
-            return (ft_set_parse_err(E_MEM), NULL);
-        if (!g_minishell.curr_token
-            || g_minishell.curr_token->type != T_C_PARENT)
-            return (ft_set_parse_err(E_SYNTAX), node);
+            return (ft_set_parse_err(1), NULL);
+        if (!global_var.curr_token
+            || global_var.curr_token->type != T_C_PARENT)
+            return (ft_set_parse_err(1), node);
         ft_get_next_token();
         return (node);
     }
@@ -36,56 +36,56 @@ t_node  *ft_term(void)
         return (ft_get_simple_cmd());
 }
 
-t_node  *ft_expression(int min_prec)
+t_branch  *get_sequence(int min_prec)
 {
-    t_node          *left;
-    t_node          *right;
+    t_branch          *left;
+    t_branch          *right;
     int             n_prec;
     t_token_type    op;
 
-    if (g_minishell.parse_err.type || !g_minishell.curr_token)
+    if (global_var.parse_err || !global_var.curr_token)
         return (NULL);
-    left = ft_term();
+    left = get_term();
     if (!left)
         return (NULL);
     while (ft_curr_token_is_binop() && ft_curr_token_prec() >= min_prec)
     {
-        op = g_minishell.curr_token->type;
+        op = global_var.curr_token->type;
         ft_get_next_token();
-        if (!g_minishell.curr_token)
-            return (ft_set_parse_err(E_SYNTAX), left);
+        if (!global_var.curr_token)
+            return (ft_set_parse_err(1), left);
         n_prec = ft_prec(op) + 1;
-        right = ft_expression(n_prec);
+        right = get_sequence(n_prec);
         if (!right)
             return (left);
-        left = ft_combine(op, left, right);
+        left = join_branch(op, left, right);
         if (!left)
             return (ft_clear_ast(&left), ft_clear_ast(&left), NULL);
     }
     return (left);
 }
 
-t_node  *ft_combine (t_token_type type_op, t_node *left, t_node *right)
+t_branch  *join_branch (t_token_type type_op, t_branch *left, t_branch *right)
 {
-    t_node  *node;
+    t_branch  *node;
 
-    if (g_minishell.parse_err.type)
+    if (global_var.parse_err)
         return (NULL);
-    node = ft_new_node(ft_get_node_type(type_op));
+    node = ft_new_branch(ft_get_branch_type(type_op));
     if (!node)
-        return (ft_set_parse_err(E_MEM), NULL);
+        return (ft_set_parse_err(1), NULL);
     node->left = left;
     node->right = right;
     return (node);
 }
 
-t_node *parsing(void)
+t_branch *parsing(void)
 {
-    t_node  *ast;
+    t_branch  *ast;
 
-    g_minishell.curr_token = g_minishell.tokens;
-    ast = ft_expression(0);
-    if (g_minishell.curr_token)
-        return (ft_set_parse_err(E_SYNTAX), ast);
+    global_var.curr_token = global_var.tokens;
+    ast = get_sequence(0);
+    if (global_var.curr_token)
+        return (ft_set_parse_err(1), ast);
     return (ast);
 }

@@ -12,26 +12,26 @@
 
 #include "minishell.h"
 
-void    ft_clear_io_list(t_io_node  **lst)
+void    ft_clear_io_list(t_io_list  **lst)
 {
-    t_io_node   *curr_node;
-    t_io_node   *next;
+    t_io_list   *curr_branch;
+    t_io_list   *next;
 
-    curr_node = *lst;
-    if (!curr_node)
+    curr_branch = *lst;
+    if (!curr_branch)
         return ;
-    while (curr_node)
+    while (curr_branch)
     {
-        free(curr_node->value);
-        ft_free_char2(curr_node->expanded_value);
-        next = curr_node->next;
-        free(curr_node);
-        curr_node = next;
+        free(curr_branch->value);
+        ft_free_char2(curr_branch->expanded_value);
+        next = curr_branch->next;
+        free(curr_branch);
+        curr_branch = next;
     }
     *lst = NULL;
 }
 
-void    ft_clear_cmd_node(t_node *node)
+void    ft_clear_cmd_branch(t_branch *node)
 {
     if (!node)
         return ;
@@ -40,12 +40,12 @@ void    ft_clear_cmd_node(t_node *node)
     ft_free_char2(node->expanded_args);
 }
 
-void    ft_recursive_clear_ast(t_node *node)
+void    ft_recursive_clear_ast(t_branch *node)
 {
     if (!node)
         return ;
     if (node->type == N_CMD)
-        ft_clear_cmd_node(node);
+        ft_clear_cmd_branch(node);
     else
     {
         if (node->left)
@@ -56,9 +56,9 @@ void    ft_recursive_clear_ast(t_node *node)
     free(node);
 }
 
-void    ft_clear_ast(t_node **ast)
+void    ft_clear_ast(t_branch **ast)
 {
     ft_recursive_clear_ast(*ast);
     *ast = NULL;
-    ft_clear_token_list(&g_minishell.tokens);
+    ft_clear_token_list(&global_var.tokens);
 }

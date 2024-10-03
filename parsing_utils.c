@@ -14,15 +14,15 @@
 
 void    ft_get_next_token(void)
 {
-    g_minishell.curr_token = g_minishell.curr_token->next;
+    global_var.curr_token = global_var.curr_token->next;
 }
 
 bool    ft_curr_token_is_binop(void)
 {
     t_token_type    type;
-    if (!g_minishell.curr_token)
+    if (!global_var.curr_token)
         return (false);
-    type = g_minishell.curr_token->type;
+    type = global_var.curr_token->type;
     if (type == T_PIPE || type == T_AND || type == T_OR)
         return (true);
     return (false);
@@ -45,5 +45,5 @@ int ft_prec(t_token_type type)
 
 int ft_curr_token_prec()
 {
-    return (ft_prec(g_minishell.curr_token->type));
+    return (ft_prec(global_var.curr_token->type));
 }
