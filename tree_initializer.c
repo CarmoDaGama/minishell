@@ -1,37 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free_chars.c                                       :+:      :+:    :+:   */
+/*   tree_initializer.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cgama <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/01 14:29:57 by cgama             #+#    #+#             */
-/*   Updated: 2024/10/01 14:29:59 by cgama            ###   ########.fr       */
+/*   Created: 2024/10/16 15:40:54 by cgama             #+#    #+#             */
+/*   Updated: 2024/10/16 15:40:59 by cgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_free_char2(char **tofree)
+void	init_end_branch(t_branch *branch, t_global_var *global_var)
 {
-	size_t	i;
-
-	if (!tofree || !*tofree)
+	if (!branch)
 		return ;
-	i = 0;
-	while (tofree[i])
-		free(tofree[i++]);
-	free(tofree);
-}
-
-void	ft_free_char3(char ***tofree)
-{
-	size_t	i;
-
-	if (!tofree)
-		return ;
-	i = 0;
-	while (tofree[i])
-		ft_free_char2(tofree[i++]);
-	free(tofree);
+	if (branch->type == N_PIPE)
+	{
+		init_end_branch(branch->left, global_var);
+		init_end_branch(branch->right, global_var);
+	}
+	else if (branch->args)
+	{
+		branch->expanded_args = expanding(branch->args, global_var);
+	}
+	if (branch->io_list && (branch->io_list->type == IO_HEREDOC))
+		ft_write_heredoc(branch, global_var);
 }

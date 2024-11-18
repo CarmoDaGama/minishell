@@ -16,6 +16,7 @@
 # include <stddef.h>
 # include <unistd.h>
 # include <stdlib.h>
+# include <stdbool.h>
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 42
@@ -46,7 +47,7 @@ int		ft_isascii(int c);
 int		ft_isprint(int c);
 int		ft_toupper(int c);
 int		ft_tolower(int c);
-int     ft_isspace(char c);
+int		ft_isspace(char c);
 
 /* ---------------	STRINGS		--------------- */
 size_t	ft_strlen(const char *str);
@@ -79,7 +80,7 @@ void	*ft_memmove(void *dst, const void *src, size_t len);
 void	*ft_memchr(const void *s, int c, size_t n);
 int		ft_memcmp(const void *s1, const void *s2, size_t n);
 void	*ft_calloc(size_t count, size_t size);
-
+void	*manage_momery(void *ptr, bool clean);
 /* ---------------	NUMEROS		--------------- */
 int		ft_atoi(const char *str);
 char	*ft_itoa(int n);

@@ -38,7 +38,8 @@ SRC = ft_isalpha \
 	ft_putendl_fd \
 	ft_putnbr_fd \
 	ft_isspace \
-	get_next_line
+	get_next_line \
+	manage_memory
 	
 BONUS_SRC = ft_lstnew \
 	ft_lstadd_front \

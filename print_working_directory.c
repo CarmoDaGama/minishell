@@ -1,19 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isspace.c                                       :+:      :+:    :+:   */
+/*   print_working_directory.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cgama <marvin@42.fr>                       +#+  +:+       +#+        */
+/*   By: dnzita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/30 12:57:22 by cgama             #+#    #+#             */
-/*   Updated: 2024/09/30 12:57:24 by cgama            ###   ########.fr       */
+/*   Created: 2024/10/14 08:32:33 by dnzita            #+#    #+#             */
+/*   Updated: 2024/10/14 08:32:36 by dnzita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_isspace(char c)
+#include "minishell.h"
+
+int	print_working_directory(void)
 {
-	if (c == '\t' || c == '\n' || c == '\v'
-		|| c == '\f' || c == '\r' || c == ' ')
-		return (1);
+	char	*buf;
+
+	buf = NULL;
+	buf = getcwd(buf, 0);
+	printf("%s\n", buf);
+	free(buf);
 	return (0);
 }

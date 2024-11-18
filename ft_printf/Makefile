@@ -23,6 +23,7 @@ all:				$(NAME)
 bonus:				all
 
 $(NAME):			$(LIBFT) $(OBJ_DIR) $(OBJS)
+				make -C $(LIBFT_PATH) bonus
 				cp	$(LIBFT) $(NAME)
 					$(AR) $(ARFLAGS) $(NAME) $(OBJS)
 

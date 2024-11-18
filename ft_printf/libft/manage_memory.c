@@ -1,19 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isspace.c                                       :+:      :+:    :+:   */
+/*   manage_memory.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cgama <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/30 12:57:22 by cgama             #+#    #+#             */
-/*   Updated: 2024/09/30 12:57:24 by cgama            ###   ########.fr       */
+/*   Created: 2024/10/29 10:13:41 by cgama             #+#    #+#             */
+/*   Updated: 2024/10/29 10:13:46 by cgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_isspace(char c)
+#include "libft.h"
+
+static void	ft_del(void *ptr)
 {
-	if (c == '\t' || c == '\n' || c == '\v'
-		|| c == '\f' || c == '\r' || c == ' ')
-		return (1);
-	return (0);
+	if (ptr)
+	{
+		free(ptr);
+		ptr = NULL;
+	}
+}
+
+void	*manage_momery(void *ptr, bool clean)
+{
+	static t_list	*garbage_list;
+
+	if (clean)
+	{
+		ft_lstclear(&garbage_list, ft_del);
+		return (NULL);
+	}
+	else
+	{
+		ft_lstadd_back(&garbage_list, ft_lstnew(ptr));
+		return (ptr);
+	}
 }

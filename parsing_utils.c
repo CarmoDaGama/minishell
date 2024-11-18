@@ -12,38 +12,39 @@
 
 #include "minishell.h"
 
-void    ft_get_next_token(void)
+void	ft_get_next_token(t_global_var *global_var)
 {
-    global_var.curr_token = global_var.curr_token->next;
+	global_var->curr_token = global_var->curr_token->next;
 }
 
-bool    ft_curr_token_is_binop(void)
+bool	ft_curr_token_is_binop(t_global_var *global_var)
 {
-    t_token_type    type;
-    if (!global_var.curr_token)
-        return (false);
-    type = global_var.curr_token->type;
-    if (type == T_PIPE || type == T_AND || type == T_OR)
-        return (true);
-    return (false);
+	t_token_type	type;
+
+	if (!global_var->curr_token)
+		return (false);
+	type = global_var->curr_token->type;
+	if (type == T_PIPE || type == T_AND || type == T_OR)
+		return (true);
+	return (false);
 }
 
-bool    ft_is_redir(t_token_type type)
+bool	ft_is_redir(t_token_type type)
 {
-    if (type == T_LESS || type == T_GREAT
-        || type == T_DLESS || type == T_DGREAT)
-        return (true);
-    return (false);
+	if (type == T_LESS || type == T_GREAT
+		|| type == T_DLESS || type == T_DGREAT)
+		return (true);
+	return (false);
 }
 
-int ft_prec(t_token_type type)
+int	ft_prec(t_token_type type)
 {
-    if (type == T_AND || type == T_AND)
-        return (0);
-    return (1);
+	if (type == T_AND || type == T_OR)
+		return (0);
+	return (1);
 }
 
-int ft_curr_token_prec()
+int	ft_curr_token_prec(t_global_var *global_var)
 {
-    return (ft_prec(global_var.curr_token->type));
+	return (ft_prec(global_var->curr_token->type));
 }

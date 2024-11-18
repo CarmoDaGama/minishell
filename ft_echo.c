@@ -1,37 +1,55 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free_chars.c                                       :+:      :+:    :+:   */
+/*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cgama <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/01 14:29:57 by cgama             #+#    #+#             */
-/*   Updated: 2024/10/01 14:29:59 by cgama            ###   ########.fr       */
+/*   Created: 2024/10/09 10:40:52 by cgama             #+#    #+#             */
+/*   Updated: 2024/10/09 10:40:57 by cgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_free_char2(char **tofree)
+static int	verify_arg(char *s)
 {
-	size_t	i;
+	int	i;
 
-	if (!tofree || !*tofree)
-		return ;
 	i = 0;
-	while (tofree[i])
-		free(tofree[i++]);
-	free(tofree);
+	if (s[0] != '-')
+		return (0);
+	i++;
+	while (s[i])
+	{
+		if (s[i] != 'n')
+			return (0);
+		i++;
+	}
+	return (1);
 }
 
-void	ft_free_char3(char ***tofree)
+int	ft_echo(char **args)
 {
-	size_t	i;
+	int	i;
+	int	arg;
 
-	if (!tofree)
-		return ;
-	i = 0;
-	while (tofree[i])
-		ft_free_char2(tofree[i++]);
-	free(tofree);
+	i = 1;
+	arg = 0;
+	while (args[i] != NULL && verify_arg(args[i]) == 1)
+	{
+		arg = 1;
+		i++;
+	}
+	
+	while (args[i])
+	{
+		ft_putstr_fd(args[i], 1);
+		if (args[i + 1])
+			ft_putstr_fd(" ", 1);
+		i++;
+	}
+	if (arg == 0)
+		ft_putstr_fd("\n", 1);
+	return (0);
 }
