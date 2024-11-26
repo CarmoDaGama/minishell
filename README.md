@@ -12,9 +12,9 @@ Validated 06/11/2024. Grade: 100%.
 
 ## Usage
 
-Clone the repository with the [minitester](https://github.com/CarmoDaGama/minishell.git) submodule:
+Clone the repository:
 ```
-git clone --recurse-submodules git@github.com:mcombeau/minishell.git
+git clone  https://github.com/CarmoDaGama/minishell.git
 ```
 
 To compile:
