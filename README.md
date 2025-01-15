@@ -88,6 +88,7 @@ Other useful links:
 * The Open Group Base Specifications, [Shell Command Language](https://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html)
 * [A Guide to Unix Shell Quoting](https://rg1-teaching.mpi-inf.mpg.de/unixffb-ss98/quoting-guide.html)
 * [Austin Tripp's Quick Tutorial on Bash Quotes](https://www.austintripp.ca/blog/2019/07/18/bash-quotes)
+* [Minishell Tester](https://github.com/baltsaros/minishell)
 
 ---
 Made by aquesada and mcombeau
